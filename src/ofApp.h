@@ -101,12 +101,13 @@ class ofApp : public ofBaseApp{
 		vector <ofPtr<CustomRect> > rects;
 		vector <ofPtr<CustomCircle> > circles;
 		
-		ofImage customRectImage;
 		vector<ofImage> customRectImageVector;
+		vector<ofImage> customCircleImageVector;
 		
 		// camera
 		ofxBlackMagic blackMagic;
 		RateTimer timer;
 		
-		int photoNumber;
+		int photoNumberRect;
+		int photoNumberCircle;
 };

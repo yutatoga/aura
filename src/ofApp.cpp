@@ -85,14 +85,20 @@ void ofApp::setup(){
 //		loader.saveTo(<#string url#>, <#string path#>);
 //		imageTest.loadImage(loader);
 		
-		//
-		customRectImage.loadImage("0.jpg");
-		photoNumber = 17;
-		for (int i = 0; i<photoNumber; i++) {
+
+		photoNumberRect = 17;
+		for (int i = 0; i<photoNumberRect; i++) {
 				ofImage img;
 				img.loadImage(ofToString(i)+".jpg");
 				customRectImageVector.push_back(img);
 		}
+		photoNumberCircle = 20;
+		for (int i = 0; i<photoNumberCircle; i++) {
+				ofImage img;
+				img.loadImage("circleLogo/"+ofToString(i)+".png");
+				customCircleImageVector.push_back(img);
+		}
+		
 		
 		//初期追加
 //		for (int i=0; i<1000; i++) {
@@ -118,10 +124,17 @@ void ofApp::update(){
 		// circles
 		int circleLifeTime = 30;
 		ofRemove(rects, removeShapeOffScreen);
-		ofRemove(circles, removeShapeOffScreen);
+//		ofRemove(circles, removeShapeOffScreen);
 		for (int i=0; i<circles.size(); i++) {
 				if (ofGetElapsedTimef() - circles[i]->getBirthTime() > circleLifeTime) {
 						circles.erase(circles.begin()+i);
+				}
+				if (!ofRectangle(0, -400, ofGetWidth(), ofGetHeight()+400).inside(circles[i]->getPosition())) {
+						if (circles[i]->getSpecial()) {
+								ofLogNotice("あたり");
+						}
+						circles.erase(circles.begin()+i);
+						
 				}
 		}
 		
@@ -134,27 +147,37 @@ void ofApp::update(){
 				rects.push_back(ofPtr<CustomRect>(new CustomRect));
 				rects.back().get()->setPhysics(0.2, 0.0, 3.9);
 				// widthをキーにして、比率を守って、高さを決定する
-				int photoId = rand()%photoNumber;
+				int photoIdRect = rand()%photoNumberRect;
 				float logoArea = ofRandom(1000, 10000);
 
-				float w = sqrt(logoArea*customRectImageVector[photoId].getWidth()/customRectImageVector[photoId].getHeight());
+				float w = sqrt(logoArea*customRectImageVector[photoIdRect].getWidth()/customRectImageVector[photoIdRect].getHeight());
 				float h = logoArea/w;
 //				float h = w*customRectImageVector[photoId].getHeight()/customRectImageVector[photoId].getWidth();
-				rects.back().get()->setup(box2d.getWorld(), ofGetWidth()/2.+ofRandom(-ofGetWidth()/2.*0.5, ofGetWidth()/2.*0.5), ofRandom(-ofGetHeight()/2.0, -customRectImageVector[photoId].getHeight()), w, h);
-				rects.back().get()->setImage(customRectImageVector[photoId]);
+				rects.back().get()->setup(box2d.getWorld(), ofGetWidth()/2.+ofRandom(-ofGetWidth()/2.*0.5, ofGetWidth()/2.*0.5), ofRandom(-ofGetHeight()/3.0, -customRectImageVector[photoIdRect].getHeight()), w, h);
+				rects.back().get()->setImage(customRectImageVector[photoIdRect]);
 				rects.back().get()->setBirthTime(ofGetElapsedTimef());
 		}
 		// circles
 		if (circles.size() < 1500) {
+				int photoIdCircle = rand()%photoNumberCircle;
 				circles.push_back(ofPtr<CustomCircle>(new CustomCircle));
 				circles.back().get()->setCircleMainColor(ofColor(ofRandom(0, 255), ofRandom(0, 255), ofRandom(0, 255), 127));
 				circles.back().get()->setBirthTime(ofGetElapsedTimef());
+				//ADJUSTME: 画像ありとなしの割合を調整
+				float radius;
+				if (rand()%10 > 8) {
+						circles.back().get()->setImage(customCircleImageVector[photoIdCircle]);
+						radius = ofRandom(10, 30);
+				}else{
+						radius = ofRandom(3, 20);
+				}
+				if ((int)ofGetElapsedTimef() % 100 == 0) {
+						circles.back().get()->setSpecial(true);
+				}else{
+						circles.back().get()->setSpecial(false);
+				}
 				circles.back().get()->setPhysics(1.0, 0.0, 3.9);
-				ofImage image;
-				image.loadImage("app.png");
-				circles.back().get()->setImage(image);
-				float radius = ofRandom(3, 20);
-				circles.back().get()->setup(box2d.getWorld(), ofRandom(0, ofGetWidth()), ofRandom(-ofGetHeight()/2.0, -radius), radius);
+				circles.back().get()->setup(box2d.getWorld(), ofRandom(0, ofGetWidth()), ofRandom(-ofGetHeight()/3.0, -radius), radius);
 		}
 		
 		//camera
@@ -257,7 +280,7 @@ void ofApp::draw(){
 		
 		//customRect
 		//draw myImage
-		ofLog(OF_LOG_NOTICE, ofToString(rects.size()));
+//		ofLog(OF_LOG_NOTICE, ofToString(rects.size()));
 		for(int i=0; i<rects.size(); i++){
 				rects[i]->draw();
 		}

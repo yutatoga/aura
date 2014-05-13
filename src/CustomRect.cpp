@@ -17,7 +17,7 @@ void CustomRect::draw() {
 		ofSetRectMode(OF_RECTMODE_CENTER);
 		ofTranslate(getPosition().x, getPosition().y);
 		ofRotate(getRotation());
-		ofSetColor(255, 255, 255);
+		ofSetColor(255, 255, 255, 255);
 		img.draw(0, 0, getWidth(), getHeight());
 		ofPopMatrix();
 		ofPopStyle();
