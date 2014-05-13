@@ -108,16 +108,19 @@ void ofApp::setup(){
 void ofApp::update(){
 		// 削除
 		// rects
+		int rectLifeTime = 30;
 		for (int i=0; i<rects.size(); i++) {
-				if (ofGetElapsedTimef() - rects[i]->getBirthTime() > 10) {
+				if (ofGetElapsedTimef() - rects[i]->getBirthTime() > rectLifeTime) {
 						rects.erase(rects.begin()+i);
 				}
 		}
+		
 		// circles
+		int circleLifeTime = 30;
 		ofRemove(rects, removeShapeOffScreen);
 		ofRemove(circles, removeShapeOffScreen);
 		for (int i=0; i<circles.size(); i++) {
-				if (ofGetElapsedTimef() - circles[i]->getBirthTime() > 10) {
+				if (ofGetElapsedTimef() - circles[i]->getBirthTime() > circleLifeTime) {
 						circles.erase(circles.begin()+i);
 				}
 		}
@@ -147,6 +150,9 @@ void ofApp::update(){
 				circles.back().get()->setCircleMainColor(ofColor(ofRandom(0, 255), ofRandom(0, 255), ofRandom(0, 255), 127));
 				circles.back().get()->setBirthTime(ofGetElapsedTimef());
 				circles.back().get()->setPhysics(1.0, 0.0, 3.9);
+				ofImage image;
+				image.loadImage("app.png");
+				circles.back().get()->setImage(image);
 				float radius = ofRandom(3, 20);
 				circles.back().get()->setup(box2d.getWorld(), ofRandom(0, ofGetWidth()), ofRandom(-ofGetHeight()/2.0, -radius), radius);
 		}

@@ -10,14 +10,13 @@
 
 class CustomRect : public ofxBox2dRect {
 		
-private:
-		ofImage img;
-		
 public:
 		CustomRect();
 		void draw();
+		
 		void setImage(ofImage img);
 		ofImage getImage();
+		ofImage img;
 		
 		void setBirthTime(float elapsedTime);
 		float getBirthTime();

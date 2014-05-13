@@ -6,6 +6,7 @@ void CustomCircle::draw()
     float radius = getRadius(); //半径を取得
     glPushMatrix(); //座標を変更
     glTranslatef(getPosition().x, getPosition().y, 0); //物体の位置に座標を移動
+		ofRotate(getRotation(), 0, 0, 1); //回転
     //円を描く
 //    ofFill();
 //    ofSetColor(127, 255, 255, 11);
@@ -23,20 +24,31 @@ void CustomCircle::draw()
     ofSetColor(color);
     ofCircle(0, 0, radius);
     ofSetColor(255, 255, 255, 63);
-    ofCircle(0, 0, radius*0.5);    
+    ofCircle(0, 0, radius*0.5);
+		ofSetColor(255, 255, 255);
+		if (image.getWidth() > 0) {
+				image.draw(-getRadius(), -getRadius(), 2*getRadius(), 2*getRadius());
+		}
 		glPopMatrix(); //座標を元に戻す
 }
 
-void CustomCircle::setCircleMainColor(ofColor col)
-{
+void CustomCircle::setCircleMainColor(ofColor col){
 		color = col;
 }
 
-void CustomCircle::setBirthTime(float elapsedTime)
-{
+void CustomCircle::setBirthTime(float elapsedTime){
 		birthTime = elapsedTime;
 }
 
 float CustomCircle::getBirthTime(){
 		return birthTime;
+}
+
+// 画像が、真円であり、画像サイズが半径x半径であることを想定
+void CustomCircle::setImage(ofImage img){
+		image = img;
+}
+
+ofImage CustomCircle::getImage(){
+		return image;
 }
