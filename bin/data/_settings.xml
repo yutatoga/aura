@@ -1,19 +1,19 @@
 <controls>
     <SliderInt_threshold>
         <name>threshold</name>
-        <value>92</value>
+        <value>49</value>
     </SliderInt_threshold>
     <SliderFloat_gravity>
         <name>gravity</name>
-        <value>0.388888896</value>
+        <value>0.158119664</value>
     </SliderFloat_gravity>
     <SliderFloat_force>
         <name>force</name>
-        <value>16.068376541</value>
+        <value>17.863246918</value>
     </SliderFloat_force>
     <SliderFloat_vector_threshold>
         <name>vector threshold</name>
-        <value>0.102564104</value>
+        <value>0.119658120</value>
     </SliderFloat_vector_threshold>
     <Toggle_use_live_video>
         <name>use live video</name>

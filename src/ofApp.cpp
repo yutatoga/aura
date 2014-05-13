@@ -15,8 +15,8 @@ void ofApp::setup(){
     ofSetFrameRate(60);
 		
     //カメラから映像を取り込んで表示
-    vidGrabber.setVerbose(true);
-    vidGrabber.initGrabber(320,240);
+//    vidGrabber.setVerbose(true);
+//    vidGrabber.initGrabber(320,240);
 		
 		blackMagic.setup(1920, 1080, 59.94);
 
@@ -70,25 +70,35 @@ void ofApp::setup(){
 		
 		
     //パーティクル生成
-    particleNum = 10;
-    for (int i = 0; i < particleNum; i++) {
-        CustomCircle* p = new CustomCircle();
-        p->setPhysics(1.0, 0.0, 0.2);
-				p->setup(box2d.getWorld(), ofRandom(0, ofGetWidth()), ofRandom(0, ofGetHeight()), ofRandom(7, 14));
-//        p->disableCollistion();
-        particles.push_back(p);
-    }
+//    particleNum = 10;
+//    for (int i = 0; i < particleNum; i++) {
+//        CustomCircle* p = new CustomCircle();
+//        p->setPhysics(1.0, 0.0, 0.2);
+//				p->setup(box2d.getWorld(), ofRandom(0, ofGetWidth()), ofRandom(0, ofGetHeight()), ofRandom(7, 14));
+////        p->disableCollistion();
+//        particles.push_back(p);
+//    }
+		
 		
 //		ofURLFileLoader loader;
 //		loader.get("https://yt3.ggpht.com/-3js912icS0E/AAAAAAAAAAI/AAAAAAAAAAA/54i1xPNqEmM/s48-c-k-no/photo.jpg");
 //		loader.saveTo(<#string url#>, <#string path#>);
 //		imageTest.loadImage(loader);
 		
+		//
 		customRectImage.loadImage("0.jpg");
-		for (int i = 0; i<76; i++) {
+		photoNumber = 17;
+		for (int i = 0; i<photoNumber; i++) {
 				ofImage img;
 				img.loadImage(ofToString(i)+".jpg");
 				customRectImageVector.push_back(img);
+		}
+		
+		for (int i=0; i<1000; i++) {
+				circles.push_back(ofPtr<CustomCircle>(new CustomCircle));
+				circles.back().get()->setCircleMainColor(ofColor(ofRandom(0, 255), ofRandom(0, 255), ofRandom(0, 255), 127));
+				circles.back().get()->setPhysics(1.0, 0.0, 3.9);
+				circles.back().get()->setup(box2d.getWorld(), ofRandom(0, ofGetWidth()), ofRandom(-ofGetHeight(), 0), ofRandom(3, 20));
 		}
 }
 
@@ -96,20 +106,32 @@ void ofApp::setup(){
 void ofApp::update(){
 		// 削除
 		ofRemove(rects, removeShapeOffScreen);
+		ofRemove(circles, removeShapeOffScreen);
 		
 		box2d.setGravity(0, gravity);
     box2d.update();
 		
 		//追加
-		if (rects.size() < 1000) {
+		// rects
+		if (rects.size() < 30) {
 				rects.push_back(ofPtr<CustomRect>(new CustomRect));
-				rects.back().get()->setPhysics(1.0, 0.0, 3.9);
+				rects.back().get()->setPhysics(0.2, 0.0, 3.9);
 				// widthをキーにして、比率を守って、高さを決定する
-				int photoId = rand()%76;
-				float w = ofRandom(30, 70);
-				float h = w*customRectImageVector[photoId].getHeight()/customRectImageVector[photoId].getWidth();
+				int photoId = rand()%photoNumber;
+				float logoArea = ofRandom(1000, 10000);
+
+				float w = sqrt(logoArea*customRectImageVector[photoId].getWidth()/customRectImageVector[photoId].getHeight());
+				float h = logoArea/w;
+//				float h = w*customRectImageVector[photoId].getHeight()/customRectImageVector[photoId].getWidth();
 				rects.back().get()->setup(box2d.getWorld(), ofGetWidth()/2.+ofRandom(-ofGetWidth()/2.*0.5, ofGetWidth()/2.*0.5), -200+ofRandom(30, 100), w, h);
 				rects.back().get()->setImage(customRectImageVector[photoId]);
+		}
+		// circles
+		if (circles.size() < 1500) {
+				circles.push_back(ofPtr<CustomCircle>(new CustomCircle));
+				circles.back().get()->setCircleMainColor(ofColor(ofRandom(0, 255), ofRandom(0, 255), ofRandom(0, 255), 127));
+				circles.back().get()->setPhysics(1.0, 0.0, 3.9);
+				circles.back().get()->setup(box2d.getWorld(), ofRandom(0, ofGetWidth()), ofRandom(-ofGetHeight()/2.0, 0), ofRandom(3, 20));
 		}
 		
 		//camera
@@ -121,17 +143,17 @@ void ofApp::update(){
     //新規フレームの取り込みをリセット
     bool bNewFrame = false;
     //カメラから新規フレーム取り込み
-    vidGrabber.update();
+//    vidGrabber.update();
     //新規にフレームが切り替わったか判定
-    bNewFrame = vidGrabber.isFrameNew();
+//    bNewFrame = vidGrabber.isFrameNew();
 		
     //フレームが切り替わった際のみ画像を解析
-    if (bNewFrame){
+//    if (bNewFrame){
         //取り込んだフレームを画像としてキャプチャ
 //        colorImg.setFromPixels(vidGrabber.getPixels(), 320,240);
 				colorImg.setFromPixels(blackMagic.getColorPixels());
-        //左右反転
-        colorImg.mirror(false, true);
+        //上下・左右反転
+        colorImg.mirror(true, false);
         //カラーのイメージをグレースケールに変換
         grayImage = colorImg;
         //まだ背景画像が記録されていなければ、現在のフレームを背景画像とする
@@ -151,15 +173,17 @@ void ofApp::update(){
         VF.setFromPixels(grayDiffSmall.getPixels(), bForceInward, 0.05f);
 				
         //ベクトル場に発生した力を計算し、パーティクルにかかる力を算出
-        for(list <CustomCircle *>::iterator it = particles.begin(); it != particles.end(); ++it){
-            ofVec2f frc;
-            frc = VF.getForceFromPos((*it)->getPosition().x, (*it)->getPosition().y);
-            //設定した閾値を越えたら、VFの力を加える
-            if (frc.length() > vectorThreshold) {
-                (*it)->addForce(ofPoint(frc.x * force, frc.y * force), 1.0);
-            }
-            (*it)->update();
-        }
+				//particles
+//        for(list <CustomCircle *>::iterator it = particles.begin(); it != particles.end(); ++it){
+//            ofVec2f frc;
+//            frc = VF.getForceFromPos((*it)->getPosition().x, (*it)->getPosition().y);
+//            //設定した閾値を越えたら、VFの力を加える
+//            if (frc.length() > vectorThreshold) {
+//                (*it)->addForce(ofPoint(frc.x * force, frc.y * force), 1.0);
+//            }
+//            (*it)->update();
+//        }
+				
 				//同様にcustom rectに対しても
 				for (int i = 0; i<rects.size(); i++) {
 						ofVec2f frc;
@@ -170,7 +194,17 @@ void ofApp::update(){
             }
 						rects[i]->update();
 				}
-    }
+				//同様にcustom circlesに対しても
+				for (int i = 0; i<circles.size(); i++){
+						ofVec2f frc;
+						frc = VF.getForceFromPos(circles[i]->getPosition().x, circles[i]->getPosition().y);
+						//設定した閾値を越えたら、VFの力を加える
+            if (frc.length() > vectorThreshold) {
+								circles[i]->addForce(ofPoint(frc.x * force, frc.y * force), 1.0);
+						}
+						circles[i]->update();
+				}
+//    }
 }
 
 //--------------------------------------------------------------
@@ -191,9 +225,9 @@ void ofApp::draw(){
     }
 		
     //パーティクルを描く
-    for(list <CustomCircle *>::iterator it = particles.begin(); it != particles.end(); ++it){
-        (*it)->draw();
-    }
+//    for(list <CustomCircle *>::iterator it = particles.begin(); it != particles.end(); ++it){
+//        (*it)->draw();
+//    }
 		
     //GUIを描く
     gui.draw();
@@ -205,9 +239,15 @@ void ofApp::draw(){
 				rects[i]->draw();
 		}
 		
+		//customCircle
+		for (int i=0; i<circles.size(); i++) {
+				circles[i]->draw();
+		}
+		
 		//camera
 //		blackMagic.drawColor();
 		ofDrawBitmapStringHighlight(ofToString((int) timer.getFramerate()), 10, 20);
+		ofDrawBitmapStringHighlight(ofToString((int) rects.size()), 40, 20);
 }
 
 //--------------------------------------------------------------
@@ -216,10 +256,13 @@ void ofApp::keyPressed(int key){
     switch (key){
         case 'f':
 				{
+//						particles.clear();
+						rects.clear();
+						circles.clear();
             //フルスクリーンのon/off
             ofToggleFullscreen();
 						VF.setupField(60, 40, ofGetWidth(), ofGetHeight());
-						box2d.createBounds();
+//						box2d.createBounds();
 						box2dEdge.clear();
 						float edgeHeight = 0.8;
 						ofPolyline polyLineEdge;

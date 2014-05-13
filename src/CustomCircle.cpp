@@ -7,12 +7,27 @@ void CustomCircle::draw()
     glPushMatrix(); //座標を変更
     glTranslatef(getPosition().x, getPosition().y, 0); //物体の位置に座標を移動
     //円を描く
+//    ofFill();
+//    ofSetColor(127, 255, 255, 11);
+//    ofCircle(0, 0, radius*2.0);
+//    ofSetColor(31, 127, 255, 127);
+//    ofCircle(0, 0, radius);
+//    ofSetColor(255, 255, 255, 63);
+//    ofCircle(0, 0, radius*0.5);
+
     ofFill();
-    ofSetColor(127, 255, 255, 11); 
+		ofColor color2;
+		color2.setHsb(color.getHue(), color.getSaturation(), color.getBrightness()*1.5);
+    ofSetColor(color2.r, color2.g, color2.b, 11);
     ofCircle(0, 0, radius*2.0);
-    ofSetColor(31, 127, 255, 127); 
+    ofSetColor(color);
     ofCircle(0, 0, radius);
-    ofSetColor(255, 255, 255, 63); 
-    ofCircle(0, 0, radius*0.5);
-    glPopMatrix(); //座標を元に戻す
+    ofSetColor(255, 255, 255, 63);
+    ofCircle(0, 0, radius*0.5);    
+		glPopMatrix(); //座標を元に戻す
+}
+
+void CustomCircle::setCircleMainColor(ofColor col)
+{
+		color = col;
 }
