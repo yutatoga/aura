@@ -94,19 +94,33 @@ void ofApp::setup(){
 				customRectImageVector.push_back(img);
 		}
 		
-		for (int i=0; i<1000; i++) {
-				circles.push_back(ofPtr<CustomCircle>(new CustomCircle));
-				circles.back().get()->setCircleMainColor(ofColor(ofRandom(0, 255), ofRandom(0, 255), ofRandom(0, 255), 127));
-				circles.back().get()->setPhysics(1.0, 0.0, 3.9);
-				circles.back().get()->setup(box2d.getWorld(), ofRandom(0, ofGetWidth()), ofRandom(-ofGetHeight(), 0), ofRandom(3, 20));
-		}
+		//初期追加
+//		for (int i=0; i<1000; i++) {
+//				circles.push_back(ofPtr<CustomCircle>(new CustomCircle));
+//				circles.back().get()->setCircleMainColor(ofColor(ofRandom(0, 255), ofRandom(0, 255), ofRandom(0, 255), 127));
+//				circles.back().get()->setBirthTime(ofGetElapsedTimef());
+//				circles.back().get()->setPhysics(1.0, 0.0, 3.9);
+//				circles.back().get()->setup(box2d.getWorld(), ofRandom(0, ofGetWidth()), ofRandom(-ofGetHeight(), 0), ofRandom(3, 20));
+//		}
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 		// 削除
+		// rects
+		for (int i=0; i<rects.size(); i++) {
+				if (ofGetElapsedTimef() - rects[i]->getBirthTime() > 10) {
+						rects.erase(rects.begin()+i);
+				}
+		}
+		// circles
 		ofRemove(rects, removeShapeOffScreen);
 		ofRemove(circles, removeShapeOffScreen);
+		for (int i=0; i<circles.size(); i++) {
+				if (ofGetElapsedTimef() - circles[i]->getBirthTime() > 10) {
+						circles.erase(circles.begin()+i);
+				}
+		}
 		
 		box2d.setGravity(0, gravity);
     box2d.update();
@@ -123,15 +137,18 @@ void ofApp::update(){
 				float w = sqrt(logoArea*customRectImageVector[photoId].getWidth()/customRectImageVector[photoId].getHeight());
 				float h = logoArea/w;
 //				float h = w*customRectImageVector[photoId].getHeight()/customRectImageVector[photoId].getWidth();
-				rects.back().get()->setup(box2d.getWorld(), ofGetWidth()/2.+ofRandom(-ofGetWidth()/2.*0.5, ofGetWidth()/2.*0.5), -200+ofRandom(30, 100), w, h);
+				rects.back().get()->setup(box2d.getWorld(), ofGetWidth()/2.+ofRandom(-ofGetWidth()/2.*0.5, ofGetWidth()/2.*0.5), ofRandom(-ofGetHeight()/2.0, -customRectImageVector[photoId].getHeight()), w, h);
 				rects.back().get()->setImage(customRectImageVector[photoId]);
+				rects.back().get()->setBirthTime(ofGetElapsedTimef());
 		}
 		// circles
 		if (circles.size() < 1500) {
 				circles.push_back(ofPtr<CustomCircle>(new CustomCircle));
 				circles.back().get()->setCircleMainColor(ofColor(ofRandom(0, 255), ofRandom(0, 255), ofRandom(0, 255), 127));
+				circles.back().get()->setBirthTime(ofGetElapsedTimef());
 				circles.back().get()->setPhysics(1.0, 0.0, 3.9);
-				circles.back().get()->setup(box2d.getWorld(), ofRandom(0, ofGetWidth()), ofRandom(-ofGetHeight()/2.0, 0), ofRandom(3, 20));
+				float radius = ofRandom(3, 20);
+				circles.back().get()->setup(box2d.getWorld(), ofRandom(0, ofGetWidth()), ofRandom(-ofGetHeight()/2.0, -radius), radius);
 		}
 		
 		//camera

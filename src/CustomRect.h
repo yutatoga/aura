@@ -18,4 +18,8 @@ public:
 		void draw();
 		void setImage(ofImage img);
 		ofImage getImage();
+		
+		void setBirthTime(float elapsedTime);
+		float getBirthTime();
+		float birthTime;
 };

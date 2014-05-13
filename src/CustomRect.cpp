@@ -30,3 +30,11 @@ void CustomRect::setImage(ofImage image){
 ofImage CustomRect::getImage(){
 		return img;
 }
+
+void CustomRect::setBirthTime(float elapsedTime){
+		birthTime = elapsedTime;
+}
+
+float CustomRect::getBirthTime(){
+		return birthTime;
+}

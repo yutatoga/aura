@@ -31,3 +31,12 @@ void CustomCircle::setCircleMainColor(ofColor col)
 {
 		color = col;
 }
+
+void CustomCircle::setBirthTime(float elapsedTime)
+{
+		birthTime = elapsedTime;
+}
+
+float CustomCircle::getBirthTime(){
+		return birthTime;
+}
