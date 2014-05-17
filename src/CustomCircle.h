@@ -15,4 +15,16 @@ public:
 		void setBirthTime(float elapsedTime);
 		float getBirthTime();
 		float birthTime;
+		
+		void setStandardRadius(float radius);
+		float getStandardRadius();
+		float standardRadius;
+		
+		void setRadiusChangeSpeed(float speed);
+		float getRadiusChangeSpeed();
+		float radiusChangeSpeed;
+		
+		void setRadiusChangeAngle(float angle);
+		float getRadiusChangeAngle();
+		float radiusChangeAngle;
 };

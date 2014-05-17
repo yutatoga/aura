@@ -101,7 +101,7 @@ class ofApp : public ofBaseApp{
 //		vector <ofPtr<CustomRect> > rects;
 		vector <ofPtr<CustomCircle> > circles;
 		vector <ofPtr<CustomCircle> > circleLogos;
-		ofPtr<CustomCircle> specialCircle;
+//		ofPtr<CustomCircle> specialCircle;
 
 		
 //		vector<ofImage> customRectImageVector;

@@ -59,3 +59,27 @@ void CustomCircle::setImage(ofImage img){
 ofImage CustomCircle::getImage(){
 		return image;
 }
+
+void CustomCircle::setStandardRadius(float radius){
+		standardRadius = radius;
+}
+
+float CustomCircle::getStandardRadius(){
+		return standardRadius;
+}
+
+void CustomCircle::setRadiusChangeSpeed(float speed){
+		radiusChangeSpeed = speed;
+}
+
+float CustomCircle::getRadiusChangeSpeed(){
+		return radiusChangeSpeed;
+}
+
+void CustomCircle::setRadiusChangeAngle(float angle){
+		radiusChangeAngle = angle;
+}
+
+float CustomCircle::getRadiusChangeAngle(){
+		return radiusChangeAngle;
+}

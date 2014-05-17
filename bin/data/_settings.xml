@@ -5,11 +5,11 @@
     </SliderInt_threshold>
     <SliderFloat_gravity>
         <name>gravity</name>
-        <value>0.504273534</value>
+        <value>4.081196308</value>
     </SliderFloat_gravity>
     <SliderFloat_force>
         <name>force</name>
-        <value>17.863246918</value>
+        <value>15.299144745</value>
     </SliderFloat_force>
     <SliderFloat_vector_threshold>
         <name>vector threshold</name>

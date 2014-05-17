@@ -13,6 +13,7 @@ void ofApp::setup(){
 		ofSetFullscreen(true);
     ofBackground(0, 0, 0);
     ofSetFrameRate(60);
+		ofSetCircleResolution(64);
 		
 		//カメラから映像を取り込んで表示
 		useBlackMagic = false;
@@ -48,7 +49,7 @@ void ofApp::setup(){
     gui.addContent("grayDiffSmall", grayDiffSmall);
     gui.addFPSCounter();
     gui.addSlider("threshold", threshold, 0, 400);
-    gui.addSlider("gravity", gravity, 0.0, 1.0);
+    gui.addSlider("gravity", gravity, 0.0, 5.0);
     gui.addSlider("force", force, 0.0, 20.0);
     gui.addSlider("vector threshold", vectorThreshold, 0.0, 2.0);
     gui.addToggle("use live video", liveVideo);
@@ -71,7 +72,7 @@ void ofApp::setup(){
 		box2dEdge.addVertexes(polyLineEdge);
 		box2dEdge.setPhysics(0.0, 0.5, 0.5);
 		box2dEdge.create(box2d.getWorld());
-		box2d.setFPS(8);
+		box2d.setFPS(30);
 		box2d.registerGrabbing();
 		
 		//パーティクル生成
@@ -106,13 +107,13 @@ void ofApp::setup(){
 		}
 		
 		//special circle
-		specialCircleImage.loadImage("special.png");
-		specialCircle = ofPtr<CustomCircle>(new CustomCircle);
-		specialCircle->setCircleMainColor(ofColor(ofRandom(0, 255), ofRandom(0, 255), ofRandom(0, 255), 127));
-		specialCircle->setBirthTime(ofGetElapsedTimef());
-		specialCircle->setPhysics(0.2, 0.0, 3.9);
-		specialCircle->setImage(specialCircleImage);
-		specialCircle->setup(box2d.getWorld(), ofRandom(0, ofGetWidth()), ofRandom(-ofGetHeight(), 0), ofRandom(30, 50));
+//		specialCircleImage.loadImage("special.png");
+//		specialCircle = ofPtr<CustomCircle>(new CustomCircle);
+//		specialCircle->setCircleMainColor(ofColor(ofRandom(0, 255), ofRandom(0, 255), ofRandom(0, 255), 127));
+//		specialCircle->setBirthTime(ofGetElapsedTimef());
+//		specialCircle->setPhysics(0.2, 0.0, 3.9);
+//		specialCircle->setImage(specialCircleImage);
+//		specialCircle->setup(box2d.getWorld(), ofRandom(0, ofGetWidth()), ofRandom(-ofGetHeight(), 0), ofRandom(30, 50));
 		
 		//初期追加
 		//		for (int i=0; i<1000; i++) {
@@ -128,7 +129,7 @@ void ofApp::setup(){
 		circleLogosLifeTime = 45;
 		
 		// 上限数
-		circleNumberLimit = 5000;
+		circleNumberLimit = 2000;
 		circleLogoNumberLimit = 20;
 }
 
@@ -167,9 +168,9 @@ void ofApp::update(){
 		}
 		
 		// special circle
-		if (!ofRectangle(0, -400, ofGetWidth(), ofGetHeight()+400).inside(specialCircle->getPosition())) {
-				specialCircle->setPosition(ofRandom(0, ofGetWidth()), ofRandom(-ofGetHeight()/3.0, 0));
-		}
+//		if (!ofRectangle(0, -400, ofGetWidth(), ofGetHeight()+400).inside(specialCircle->getPosition())) {
+//				specialCircle->setPosition(ofRandom(0, ofGetWidth()), ofRandom(-ofGetHeight()/3.0, 0));
+//		}
 		
 		box2d.setGravity(0, gravity);
     box2d.update();
@@ -195,9 +196,11 @@ void ofApp::update(){
 				circles.push_back(ofPtr<CustomCircle>(new CustomCircle));
 				circles.back().get()->setCircleMainColor(ofColor(ofRandom(0, 255), ofRandom(0, 255), ofRandom(0, 255), 127));
 				circles.back().get()->setBirthTime(ofGetElapsedTimef());
-				//ADJUSTME: 画像ありとなしの割合を調整
-				float radius = ofRandom(3, 20);
-				circles.back().get()->setPhysics(1.0, 0.0, 3.9);
+				circles.back().get()->setPhysics(0.02, 0.0, 3.9);
+				float radius = ofRandom(3, 30);
+				circles.back().get()->setStandardRadius(radius);
+				circles.back().get()->setRadiusChangeSpeed(ofRandom(0, 0.15));
+				circles.back().get()->setRadiusChangeAngle(ofRandom(0, TWO_PI));
 				circles.back().get()->setup(box2d.getWorld(), ofRandom(0, ofGetWidth()), ofRandom(-ofGetHeight()/3.0, -radius), radius);
 		}
 		// circle logos
@@ -208,12 +211,13 @@ void ofApp::update(){
 				float radius = ofRandom(30, 60);
 				int photoId = rand()%photoNumberCircleLogos;
 				circleLogos.back().get()->setImage(customCircleImageVector[photoId]);
-				circleLogos.back().get()->setPhysics(0.2, 0.0, 3.9);
+				circleLogos.back().get()->setPhysics(0.01, 0.0, 3.9);
 				circleLogos.back().get()->setup(box2d.getWorld(), ofRandom(0, ofGetWidth()), ofRandom(-ofGetHeight()/3.0, -radius), radius);
 		}
 		
 		// 色を変える
-		specialCircle->setCircleMainColor(ofColor(ofRandom(0, 255), ofRandom(0, 255), ofRandom(0, 255), 127));
+//		specialCircle->setCircleMainColor(ofColor(ofRandom(0, 255), ofRandom(0, 255), ofRandom(0, 255), 127));
+		
 		
 		//camera
 		if (useBlackMagic) {
@@ -252,6 +256,7 @@ void ofApp::update(){
 				//ベクトル場に差分イメージを適用
 				VF.setFromPixels(grayDiffSmall.getPixels(), bForceInward, 0.05f);
 				
+				//更新
 				//ベクトル場に発生した力を計算し、パーティクルにかかる力を算出
 				//particles
 				//        for(list <CustomCircle *>::iterator it = particles.begin(); it != particles.end(); ++it){
@@ -276,6 +281,14 @@ void ofApp::update(){
 				//				}
 				//同様にcustom circlesに対しても
 				for (int i = 0; i<circles.size(); i++){
+						// サイズを変更
+						circles[i]->setRadiusChangeAngle(circles[i]->getRadiusChangeAngle()+circles[i]->getRadiusChangeSpeed());
+						if (circles[i]->getRadiusChangeAngle()>TWO_PI) {
+								circles[i]->setRadiusChangeAngle(circles[i]->getRadiusChangeAngle()-TWO_PI);
+						}
+						circles[i]->setRadius(circles[i]->getStandardRadius()*((sin(circles[i]->getRadiusChangeAngle())+1)/2.0+0.5));
+						
+						// 物理演算
 						ofVec2f frc;
 						frc = VF.getForceFromPos(circles[i]->getPosition().x, circles[i]->getPosition().y);
 						//設定した閾値を越えたら、VFの力を加える
@@ -296,13 +309,13 @@ void ofApp::update(){
 				}
 				
 				//同様にspecial circles logoに対しても
-				ofVec2f frc;
-				frc = VF.getForceFromPos(specialCircle->getPosition().x, specialCircle->getPosition().y);
-				//設定した閾値を越えたら、VFの力を加える
-				if (frc.length() > vectorThreshold) {
-						specialCircle->addForce(ofPoint(frc.x * force, frc.y * force), 1.0);
-				}
-				specialCircle->update();
+//				ofVec2f frc;
+//				frc = VF.getForceFromPos(specialCircle->getPosition().x, specialCircle->getPosition().y);
+//				//設定した閾値を越えたら、VFの力を加える
+//				if (frc.length() > vectorThreshold) {
+//						specialCircle->addForce(ofPoint(frc.x * force, frc.y * force), 1.0);
+//				}
+//				specialCircle->update();
 		}
 }
 
@@ -349,12 +362,16 @@ void ofApp::draw(){
 		}
 		
 		//special circle
-		specialCircle->draw();
+//		specialCircle->draw();
 		
 		//camera
 		//		blackMagic.drawColor();
-		ofDrawBitmapStringHighlight(ofToString((int) timer.getFramerate()), 10, 20);
+		//		ofDrawBitmapStringHighlight(ofToString((int) timer.getFramerate()), 10, 20);
 		//		ofDrawBitmapStringHighlight(ofToString((int) rects.size()), 40, 20);
+		
+		// debug
+		// フレームレート表示
+		ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 10, 20);
 }
 
 //--------------------------------------------------------------
