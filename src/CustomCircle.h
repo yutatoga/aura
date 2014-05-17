@@ -15,9 +15,4 @@ public:
 		void setBirthTime(float elapsedTime);
 		float getBirthTime();
 		float birthTime;
-		
-		//あたり
-		void setSpecial(bool isSpecial);
-		bool getSpecial();
-		bool special;
 };

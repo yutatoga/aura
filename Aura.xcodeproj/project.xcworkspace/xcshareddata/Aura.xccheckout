@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>0EC18FE2-6C5B-49E5-8811-C9BA296904DF</string>
+	<key>IDESourceControlProjectName</key>
+	<string>Aura</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>C6A0F511-4B19-4D42-8F4B-4E49F6F14D2F</key>
+		<string>https://github.com/yutatoga/aura.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Aura.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>C6A0F511-4B19-4D42-8F4B-4E49F6F14D2F</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/yutatoga/aura.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>C6A0F511-4B19-4D42-8F4B-4E49F6F14D2F</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>C6A0F511-4B19-4D42-8F4B-4E49F6F14D2F</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Aura</string>
+		</dict>
+	</array>
+</dict>
+</plist>

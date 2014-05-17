@@ -16,22 +16,24 @@ void CustomCircle::draw()
 //    ofSetColor(255, 255, 255, 63);
 //    ofCircle(0, 0, radius*0.5);
 		
-		if (image.getWidth() > 0) {
+		// 背景の円
+		ofPushStyle();
+		ofFill();
+		ofColor color2;
+		color2.setHsb(color.getHue(), color.getSaturation(), color.getBrightness()*1.5);
+		ofSetColor(color2.r, color2.g, color2.b, 11);
+		ofCircle(0, 0, radius*2.0);
+		ofSetColor(color);
+		ofCircle(0, 0, radius);
+		ofSetColor(255, 255, 255, 63);
+		ofCircle(0, 0, radius*0.5);
+		ofPopStyle();
+		
+		//画像
+		if(image.isAllocated()){
 				ofPushStyle();
 				ofSetColor(255, 255, 255, 255);
 				image.draw(-getRadius(), -getRadius(), 2*getRadius(), 2*getRadius());
-				ofPopStyle();
-		}else{
-				ofPushStyle();
-				ofFill();
-				ofColor color2;
-				color2.setHsb(color.getHue(), color.getSaturation(), color.getBrightness()*1.5);
-				ofSetColor(color2.r, color2.g, color2.b, 11);
-				ofCircle(0, 0, radius*2.0);
-				ofSetColor(color);
-				ofCircle(0, 0, radius);
-				ofSetColor(255, 255, 255, 63);
-				ofCircle(0, 0, radius*0.5);
 				ofPopStyle();
 		}
 		glPopMatrix(); //座標を元に戻す
@@ -56,12 +58,4 @@ void CustomCircle::setImage(ofImage img){
 
 ofImage CustomCircle::getImage(){
 		return image;
-}
-
-void CustomCircle::setSpecial(bool isSpecial){
-		special = isSpecial;
-}
-
-bool CustomCircle::getSpecial(){
-		return special;
 }

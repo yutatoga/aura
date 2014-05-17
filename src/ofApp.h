@@ -63,7 +63,7 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 		
 		//カメラ入力を準備
-//    ofVideoGrabber vidGrabber;
+    ofVideoGrabber vidGrabber;
 		
     ofxCvColorImage colorImg; //オリジナルのカラー映像
     ofxCvGrayscaleImage grayImage; //グレースケールに変換後
@@ -98,16 +98,28 @@ class ofApp : public ofBaseApp{
 //    list <CustomCircle *> particles;
 //    int particleNum;
 		
-		vector <ofPtr<CustomRect> > rects;
+//		vector <ofPtr<CustomRect> > rects;
 		vector <ofPtr<CustomCircle> > circles;
+		vector <ofPtr<CustomCircle> > circleLogos;
+		ofPtr<CustomCircle> specialCircle;
+
 		
-		vector<ofImage> customRectImageVector;
+//		vector<ofImage> customRectImageVector;
 		vector<ofImage> customCircleImageVector;
+		ofImage specialCircleImage;
 		
 		// camera
+		bool useBlackMagic;
 		ofxBlackMagic blackMagic;
 		RateTimer timer;
 		
-		int photoNumberRect;
-		int photoNumberCircle;
+//		int photoNumberRect;
+		int photoNumberCircleLogos;
+	  int circleNumberLimit;
+		int circleLogoNumberLimit;
+		
+		int circleLifeTime;
+		int circleLogosLifeTime;
+//		int rectNumberLimit;
+		
 };
