@@ -20,12 +20,12 @@ void CustomCircle::draw()
 		ofPushStyle();
 		ofFill();
 		ofColor color2;
-		color2.setHsb(color.getHue(), color.getSaturation(), color.getBrightness()*1.5);
-		ofSetColor(color2.r, color2.g, color2.b, 11);
+		color2.setHsb(color.getHue(), color.getSaturation(), color.getBrightness()*1.5, color.a*0.1);
+		ofSetColor(color2.r, color2.g, color2.b, color2.a);
 		ofCircle(0, 0, radius*2.0);
 		ofSetColor(color);
 		ofCircle(0, 0, radius);
-		ofSetColor(255, 255, 255, 63);
+		ofSetColor(255, 255, 255, color.a*0.5);
 		ofCircle(0, 0, radius*0.5);
 		ofPopStyle();
 		

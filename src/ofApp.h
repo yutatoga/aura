@@ -120,6 +120,14 @@ class ofApp : public ofBaseApp{
 		
 		int circleLifeTime;
 		int circleLogosLifeTime;
+		
+		float circleSizeRangeMinimum, circleSizeRangeMaximum;
+		float circleLogoSizeRangeMinimum, circleLogoSizeRangeMaximum;
+		
 //		int rectNumberLimit;
 		
+		
+		// this is the function for contacts
+		void contactStart(ofxBox2dContactArgs &e);
+		ofSoundPlayer soundPlayer;
 };

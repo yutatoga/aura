@@ -23,8 +23,13 @@ void ofApp::setup(){
 				blackMagic.setup(imageSize.x, imageSize.y, 59.94);
 		}else{
 				vidGrabber.setVerbose(true);
-				imageSize.set(320, 240);
+				imageSize.set(1920, 1080);
+				ofSetLogLevel(OF_LOG_VERBOSE);
+				vidGrabber.listDevices();
+				// ADJUSTME: カメラを確認して、使いたいカメラのIDを入力すること
+				vidGrabber.setDeviceID(0); // logicool 920を挿した時は、 0 - FaceTime HD Camera (Built-in) / 1 - HD Pro Webcam C920
 				vidGrabber.initGrabber(imageSize.x,imageSize.y);
+				
 		}
 		
 		//使用する画像の領域を確保
@@ -49,7 +54,7 @@ void ofApp::setup(){
     gui.addContent("grayDiffSmall", grayDiffSmall);
     gui.addFPSCounter();
     gui.addSlider("threshold", threshold, 0, 400);
-    gui.addSlider("gravity", gravity, 0.0, 5.0);
+    gui.addSlider("gravity", gravity, 0.0, 10.0);
     gui.addSlider("force", force, 0.0, 20.0);
     gui.addSlider("vector threshold", vectorThreshold, 0.0, 2.0);
     gui.addToggle("use live video", liveVideo);
@@ -99,10 +104,10 @@ void ofApp::setup(){
 		//		}
 		
 		// custom circle
-		photoNumberCircleLogos = 20;
+		photoNumberCircleLogos = 36;
 		for (int i = 0; i<photoNumberCircleLogos; i++) {
 				ofImage img;
-				img.loadImage("circleLogo/"+ofToString(i)+".png");
+				img.loadImage("flat_icons/"+ofToString(i)+".png");
 				customCircleImageVector.push_back(img);
 		}
 		
@@ -129,8 +134,37 @@ void ofApp::setup(){
 		circleLogosLifeTime = 45;
 		
 		// 上限数
-		circleNumberLimit = 2000;
-		circleLogoNumberLimit = 20;
+		circleNumberLimit = 0;
+		circleLogoNumberLimit = 2000;
+		
+		// サイズの範囲設定
+		circleSizeRangeMinimum = 3;
+		circleSizeRangeMaximum = 30;
+		circleLogoSizeRangeMinimum = 5;
+		circleLogoSizeRangeMaximum = 41;
+		
+		// sound
+		// register the listener so that we get the events
+//		box2d.enableEvents();   // <-- turn on the event listener
+//		ofAddListener(box2d.contactStartEvents, this, &ofApp::contactStart);
+//		soundPlayer.loadSound("sound/4.mp3");
+//		soundPlayer.setMultiPlay(true);
+}
+
+//--------------------------------------------------------------
+void ofApp::contactStart(ofxBox2dContactArgs &e) {
+		//sound
+		//soundPlayer.play();
+		
+		////		ofLogNotice("contact start");
+//		if(e.a != NULL && e.b != NULL) {
+//				
+//				// if we collide with the ground we do not
+//				// want to play a sound. this is how you do that
+////				if(e.a->GetType() == b2Shape::e_circle && e.b->GetType() == b2Shape::e_circle) {
+////						soundPlayer.play();
+////				}
+//		}
 }
 
 //--------------------------------------------------------------
@@ -192,23 +226,24 @@ void ofApp::update(){
 		//				rects.back().get()->setBirthTime(ofGetElapsedTimef());
 		//		}
 		// circles
-		if (circles.size() < circleNumberLimit) {
-				circles.push_back(ofPtr<CustomCircle>(new CustomCircle));
-				circles.back().get()->setCircleMainColor(ofColor(ofRandom(0, 255), ofRandom(0, 255), ofRandom(0, 255), 127));
-				circles.back().get()->setBirthTime(ofGetElapsedTimef());
-				circles.back().get()->setPhysics(0.02, 0.0, 3.9);
-				float radius = ofRandom(3, 30);
-				circles.back().get()->setStandardRadius(radius);
-				circles.back().get()->setRadiusChangeSpeed(ofRandom(0, 0.15));
-				circles.back().get()->setRadiusChangeAngle(ofRandom(0, TWO_PI));
-				circles.back().get()->setup(box2d.getWorld(), ofRandom(0, ofGetWidth()), ofRandom(-ofGetHeight()/3.0, -radius), radius);
-		}
+//		if (circles.size() < circleNumberLimit) {
+//				circles.push_back(ofPtr<CustomCircle>(new CustomCircle));
+//				circles.back().get()->setCircleMainColor(ofColor(ofRandom(0, 255), ofRandom(0, 255), ofRandom(0, 255), 127));
+//				circles.back().get()->setBirthTime(ofGetElapsedTimef());
+//				circles.back().get()->setPhysics(0.02, 0.0, 3.9);
+//				float radius = ofRandom(circleSizeRangeMinimum, circleSizeRangeMaximum);
+//				circles.back().get()->setStandardRadius(radius);
+//				circles.back().get()->setRadiusChangeSpeed(ofRandom(0, 0.15));
+//				circles.back().get()->setRadiusChangeAngle(ofRandom(0, TWO_PI));
+//				circles.back().get()->setup(box2d.getWorld(), ofRandom(0, ofGetWidth()), ofRandom(-ofGetHeight()/3.0, -radius), radius);
+//		}
+
 		// circle logos
 		if (circleLogos.size() < circleLogoNumberLimit) {
 				circleLogos.push_back(ofPtr<CustomCircle>(new CustomCircle));
-				circleLogos.back().get()->setCircleMainColor(ofColor(ofRandom(0, 255), ofRandom(0, 255), ofRandom(0, 255), 127));
+				circleLogos.back().get()->setCircleMainColor(ofColor(ofRandom(0, 255), ofRandom(0, 255), ofRandom(0, 255), 0));
 				circleLogos.back().get()->setBirthTime(ofGetElapsedTimef());
-				float radius = ofRandom(30, 60);
+				float radius = ofRandom(circleLogoSizeRangeMinimum, circleLogoSizeRangeMaximum);
 				int photoId = rand()%photoNumberCircleLogos;
 				circleLogos.back().get()->setImage(customCircleImageVector[photoId]);
 				circleLogos.back().get()->setPhysics(0.01, 0.0, 3.9);
@@ -234,7 +269,8 @@ void ofApp::update(){
 				if (useBlackMagic) {
 						colorImg.setFromPixels(blackMagic.getColorPixels());
 				}else{
-						colorImg.setFromPixels(vidGrabber.getPixels(), 320,240);
+						colorImg.setFromPixels(vidGrabber.getPixelsRef());
+						
 				}
 				//ADJUSTME: 上下・左右反転()
 				colorImg.mirror(false, true);
@@ -280,23 +316,23 @@ void ofApp::update(){
 				//						rects[i]->update();
 				//				}
 				//同様にcustom circlesに対しても
-				for (int i = 0; i<circles.size(); i++){
-						// サイズを変更
-						circles[i]->setRadiusChangeAngle(circles[i]->getRadiusChangeAngle()+circles[i]->getRadiusChangeSpeed());
-						if (circles[i]->getRadiusChangeAngle()>TWO_PI) {
-								circles[i]->setRadiusChangeAngle(circles[i]->getRadiusChangeAngle()-TWO_PI);
-						}
-						circles[i]->setRadius(circles[i]->getStandardRadius()*((sin(circles[i]->getRadiusChangeAngle())+1)/2.0+0.5));
-						
-						// 物理演算
-						ofVec2f frc;
-						frc = VF.getForceFromPos(circles[i]->getPosition().x, circles[i]->getPosition().y);
-						//設定した閾値を越えたら、VFの力を加える
-						if (frc.length() > vectorThreshold) {
-								circles[i]->addForce(ofPoint(frc.x * force, frc.y * force), 1.0);
-						}
-						circles[i]->update();
-				}
+//				for (int i = 0; i<circles.size(); i++){
+//						// サイズを変更
+//						circles[i]->setRadiusChangeAngle(circles[i]->getRadiusChangeAngle()+circles[i]->getRadiusChangeSpeed());
+//						if (circles[i]->getRadiusChangeAngle()>TWO_PI) {
+//								circles[i]->setRadiusChangeAngle(circles[i]->getRadiusChangeAngle()-TWO_PI);
+//						}
+//						circles[i]->setRadius(circles[i]->getStandardRadius()*((sin(circles[i]->getRadiusChangeAngle())+1)/2.0+0.5));
+//						
+//						// 物理演算
+//						ofVec2f frc;
+//						frc = VF.getForceFromPos(circles[i]->getPosition().x, circles[i]->getPosition().y);
+//						//設定した閾値を越えたら、VFの力を加える
+//						if (frc.length() > vectorThreshold) {
+//								circles[i]->addForce(ofPoint(frc.x * force, frc.y * force), 1.0);
+//						}
+//						circles[i]->update();
+//				}
 				//同様にcustom circles logoに対しても
 				for (int i = 0; i<circleLogos.size(); i++){
 						ofVec2f frc;
@@ -326,14 +362,18 @@ void ofApp::draw(){
 		
     if (drawColorImg) {
 				//カラーイメージを描く
-        ofSetColor(255, 255, 255, 127);
+				ofPushStyle();
+        ofSetColor(255, 255, 255, 200);
         colorImg.draw(0, 0, ofGetWidth(), ofGetHeight());
+				ofPopStyle();
     }
 		
     if (drawVectorFirld) {
 				//ベクトル場を描く
+				ofPushStyle();
         ofSetColor(255, 255, 255, 127);
         VF.draw();
+				ofPopStyle();
     }
 		
 		//パーティクルを描く
@@ -352,9 +392,9 @@ void ofApp::draw(){
 		//		}
 		
 		//customCircle
-		for (int i=0; i<circles.size(); i++) {
-				circles[i]->draw();
-		}
+//		for (int i=0; i<circles.size(); i++) {
+//				circles[i]->draw();
+//		}
 		
 		//customCircleLogos
 		for (int i=0; i<circleLogos.size(); i++) {
@@ -371,7 +411,7 @@ void ofApp::draw(){
 		
 		// debug
 		// フレームレート表示
-		ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 10, 20);
+//		ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 10, 20);
 }
 
 //--------------------------------------------------------------
